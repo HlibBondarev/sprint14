@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/FJie8EEk)
 ## Please, update the initial application so that a user will be able to:
 
 1. View list of products (page available via ../products/index, ../items/index, ../products/ and ../items)
