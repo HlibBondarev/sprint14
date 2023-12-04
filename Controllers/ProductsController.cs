@@ -24,9 +24,24 @@ namespace ProductsWithRouting.Controllers
 		[Route("{items}/{action}")]
 		[Route("{controller}")]
 		[Route("{items}")]
-        public IActionResult Index(int filterId, string filtername)
+        public IActionResult Index(int? filterId, string filterName)
         {
-            return View(myProducts);
+            var filteredProducts = myProducts.ToList();
+            if (filterId != null)
+            {
+                filteredProducts = myProducts
+                    .Where(p => p.Id == filterId)
+                    .ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filterName))
+            {
+                filteredProducts = myProducts
+                    .Where(p => p.Name.Equals(filterName, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+    
+            return View(filteredProducts);
         }
 
         public IActionResult View(int id)
