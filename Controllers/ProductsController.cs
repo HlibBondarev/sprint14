@@ -12,76 +12,86 @@ using ProductsWithRouting.Services;
 namespace ProductsWithRouting.Controllers
 {
 	public class ProductsController : Controller
-    {
-        private List<Product> myProducts;
+	{
+		private List<Product> myProducts;
 
-        public ProductsController(Data data)
-        {
-            myProducts = data.Products;
-        }
+		public ProductsController(Data data)
+		{
+			myProducts = data.Products;
+		}
 
 		[Route("{controller}/{action}")]
 		[Route("{items}/{action}")]
 		[Route("{controller}")]
 		[Route("{items}")]
-        public IActionResult Index(int filterId, string filtername)
-        {
-            return View(myProducts);
-        }
+		public IActionResult Index(int filterId, string filtername)
+		{
+			return View(myProducts);
+		}
 
-        public IActionResult View(int id)
-        {
-            if (myProducts.Find(x => x.Id == id) == null)
-                return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
+		public IActionResult View(int id)
+		{
+			if (myProducts.Find(x => x.Id == id) == null)
+				return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
 
-            //Please, add your implementation of the method
-            return View(/*TODO: pass corresponding product here*/);
-        }
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            if (myProducts.Find(x => x.Id == id) == null)
-                return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
+			//Please, add your implementation of the method
+			return View(/*TODO: pass corresponding product here*/);
+		}
 
-            return View(/*TODO: pass corresponding product here*/);
-        } 
-        [HttpPost]
-        public IActionResult Edit(Product product)
-        {
-            //Please, add your implementation of the method
-            return View(/*TODO: pass corresponding product here*/);
-        } 
-        
-        [HttpPost]
-        public IActionResult Create(Product product)
-        {
-            //Please, add your implementation of the method
-            return View(/*TODO: pass corresponding product here*/);
-        }
+		[HttpGet]
+		public IActionResult Edit(int id)
+		{
+			if (myProducts.Find(x => x.Id == id) == null)
+				return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
 
-        public IActionResult Create()
-        {
-            //Please, add your implementation of the method
-            return View(/*TODO: pass corresponding product here*/);
-        }
+			return View(/*TODO: pass corresponding product here*/);
+		}
+		[HttpPost]
+		public IActionResult Edit(Product product)
+		{
+			//Please, add your implementation of the method
+			return View(/*TODO: pass corresponding product here*/);
+		}
 
-        [Route("products/delete/{id}")]
-        public IActionResult Delete(int id)
-        {
-            var product = myProducts.Find(x => x.Id == id);
-            if (product == null)
-                return RedirectToAction("Error", new ProductError(id, "No product with this Id was found: "));
+		[Route("{controller}/{action}")]
+		[HttpPost]
+		public IActionResult Create(Product product)
+		{
+			if (!ModelState.IsValid)
+			{
+				return RedirectToAction("Error", new ProductError(product.Id, "The created product has not been validated"));
+			}
+			if (string.IsNullOrEmpty(product.Name))
+			{
+				return RedirectToAction("Error", new ProductError(product.Id, "The created product must have a name, Id="));
+			}
+			myProducts.Add(product);
+			return RedirectToAction("Index");
+		}
 
-            myProducts.Remove(product);
-
-            return RedirectToAction("Index");
-        }
+		[Route("{controller}/{new}")]
+		public IActionResult Create()
+		{
+			return View(new Product() { Id = myProducts.MaxBy(p => p.Id).Id + 1 });
+		}
 
 
-        [Route("~/product-error")]
-        public IActionResult Error(ProductError error)
-        {            
-            return View(error);
-        }
-    }
+		[Route("products/delete/{id}")]
+		public IActionResult Delete(int id)
+		{
+			var product = myProducts.Find(x => x.Id == id);
+			if (product == null)
+				return RedirectToAction("Error", new ProductError(id, "No product with this Id was found: "));
+
+			myProducts.Remove(product);
+
+			return RedirectToAction("Index");
+		}
+
+		[Route("~/product-error")]
+		public IActionResult Error(ProductError error)
+		{
+			return View(error);
+		}
+	}
 }
