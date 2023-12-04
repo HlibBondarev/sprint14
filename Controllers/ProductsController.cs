@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace ProductsWithRouting.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            //Please, add your implementation of the method
+            
             return View(/*TODO: pass corresponding product here*/);
         } 
         [HttpPost]
@@ -61,9 +62,11 @@ namespace ProductsWithRouting.Controllers
             return View("Index"/*TODO: pass corresponding product here*/);
         }
 
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+        [Route("~/product-error")]
+        public IActionResult Error(ProductError error)
+        {            
+            return View(error);
         }
     }
 }
