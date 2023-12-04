@@ -65,13 +65,16 @@ namespace ProductsWithRouting.Controllers
             return View(/*TODO: pass corresponding product here*/);
         }
 
+        [Route("products/delete/{id}")]
         public IActionResult Delete(int id)
         {
-            if (myProducts.Find(x => x.Id == id) == null)
-                return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
+            var product = myProducts.Find(x => x.Id == id);
+            if (product == null)
+                return RedirectToAction("Error", new ProductError(id, "No product with this Id was found: "));
 
-            //Please, add your implementation of the method
-            return View("Index"/*TODO: pass corresponding product here*/);
+            myProducts.Remove(product);
+
+            return RedirectToAction("Index");
         }
 
 
