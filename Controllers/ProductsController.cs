@@ -11,7 +11,11 @@ using ProductsWithRouting.Services;
 
 namespace ProductsWithRouting.Controllers
 {
-    public class ProductsController : Controller
+	//[Route("[items]")]
+	//[Route("[controller]")]
+	[Route("{controller}")]
+	[Route("{items}")]
+	public class ProductsController : Controller
     {
         private List<Product> myProducts;
 
@@ -20,6 +24,12 @@ namespace ProductsWithRouting.Controllers
             myProducts = data.Products;
         }
 
+        //View list of products (page available via ../products/index, ../items/index, ../products/ and ../items)
+
+        //[Route("[action]")]
+        //[Route("")]
+        [Route("{action}")]
+        [Route("")]
         public IActionResult Index(int filterId, string filtername)
         {
             return View(myProducts);
