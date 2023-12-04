@@ -40,16 +40,24 @@ namespace ProductsWithRouting.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            if (myProducts.Find(x => x.Id == id) == null)
+            var productToEdit = myProducts.Find(x => x.Id == id);
+            if ( productToEdit == null)
                 return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
 
-            return View(/*TODO: pass corresponding product here*/);
+            return View(productToEdit);
         } 
         [HttpPost]
         public IActionResult Edit(Product product)
         {
-            //Please, add your implementation of the method
-            return View(/*TODO: pass corresponding product here*/);
+            int productIndex = myProducts.FindIndex(p => p.Id == product.Id);
+            if (productIndex == -1)
+            {
+                return RedirectToAction("Error", new ProductError(product.Id, "Wrong product Id: "));
+            }
+
+            myProducts[productIndex] = product;
+            
+            return View("Index", myProducts);
         } 
         
         [HttpPost]
