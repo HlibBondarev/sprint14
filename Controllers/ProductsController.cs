@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -26,13 +27,18 @@ namespace ProductsWithRouting.Controllers
 
         public IActionResult View(int id)
         {
+            if (myProducts.Find(x => x.Id == id) == null)
+                return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
+
             //Please, add your implementation of the method
             return View(/*TODO: pass corresponding product here*/);
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            //Please, add your implementation of the method
+            if (myProducts.Find(x => x.Id == id) == null)
+                return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
+
             return View(/*TODO: pass corresponding product here*/);
         } 
         [HttpPost]
@@ -57,13 +63,18 @@ namespace ProductsWithRouting.Controllers
 
         public IActionResult Delete(int id)
         {
+            if (myProducts.Find(x => x.Id == id) == null)
+                return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
+
             //Please, add your implementation of the method
             return View("Index"/*TODO: pass corresponding product here*/);
         }
 
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+        [Route("~/product-error")]
+        public IActionResult Error(ProductError error)
+        {            
+            return View(error);
         }
     }
 }
