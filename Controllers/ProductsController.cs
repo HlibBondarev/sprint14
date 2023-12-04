@@ -27,13 +27,18 @@ namespace ProductsWithRouting.Controllers
 
         public IActionResult View(int id)
         {
+            if (myProducts.Find(x => x.Id == id) == null)
+                return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
+
             //Please, add your implementation of the method
             return View(/*TODO: pass corresponding product here*/);
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            
+            if (myProducts.Find(x => x.Id == id) == null)
+                return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
+
             return View(/*TODO: pass corresponding product here*/);
         } 
         [HttpPost]
@@ -58,6 +63,9 @@ namespace ProductsWithRouting.Controllers
 
         public IActionResult Delete(int id)
         {
+            if (myProducts.Find(x => x.Id == id) == null)
+                return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
+
             //Please, add your implementation of the method
             return View("Index"/*TODO: pass corresponding product here*/);
         }
