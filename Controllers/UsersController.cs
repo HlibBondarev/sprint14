@@ -18,8 +18,8 @@ namespace ProductsWithRouting.Controllers
         {
             myUsers = data.Users;
         }
-
-        public IActionResult Index(string id)
+		[Route("{controller}/{action}")]
+		public IActionResult Index(string id)
         {
             return View(myUsers);
         }

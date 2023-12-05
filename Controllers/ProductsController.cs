@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using ProductsWithRouting.Models;
 using ProductsWithRouting.Services;
@@ -57,16 +58,26 @@ namespace ProductsWithRouting.Controllers
 		[HttpPost]
 		public IActionResult Create(Product product)
 		{
-			if (!ModelState.IsValid)
+			// Server side validation if client side javascript is disabled
+			if (ModelState.IsValid)
 			{
-				return RedirectToAction("Error", new ProductError(product.Id, "The created product has not been validated"));
+				myProducts.Add(product);
+				return RedirectToAction("Index");
 			}
-			if (string.IsNullOrEmpty(product.Name))
+
+			string errorMessages = "The created product has not been validated.";
+			foreach (var item in ModelState)
 			{
-				return RedirectToAction("Error", new ProductError(product.Id, "The created product must have a name, Id="));
+				if (item.Value.ValidationState == ModelValidationState.Invalid)
+				{
+					errorMessages = $"{errorMessages}\nExceptiion in property {item.Key}:\n";
+					foreach (var error in item.Value.Errors)
+					{
+						errorMessages = $"{errorMessages}{error.ErrorMessage}\n";
+					}
+				}
 			}
-			myProducts.Add(product);
-			return RedirectToAction("Index");
+			return RedirectToAction("Error", new ProductError(product.Id, errorMessages));
 		}
 
 		[Route("{controller}/{new}")]
