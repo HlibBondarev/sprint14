@@ -73,8 +73,9 @@ namespace ProductsWithRouting.Controllers
     
               return View("Index", myProducts);
         } 
+		[Route("{controller}/{action}")]
         [HttpPost]
-        public IActionResult Create(Product product)
+		public IActionResult Create(Product product)
         {
             // Server side validation if client side javascript is disabled
             if (ModelState.IsValid)
