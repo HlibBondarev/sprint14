@@ -24,25 +24,40 @@ namespace ProductsWithRouting.Controllers
 		[Route("{items}/{action}")]
 		[Route("{controller}")]
 		[Route("{items}")]
-        public IActionResult Index(int filterId, string filtername)
+        public IActionResult Index(int? filterId, string filterName)
         {
-            return View(myProducts);
+            var filteredProducts = myProducts.ToList();
+            if (filterId != null)
+            {
+                filteredProducts = myProducts
+                    .Where(p => p.Id == filterId)
+                    .ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filterName))
+            {
+                filteredProducts = myProducts
+                    .Where(p => p.Name.Equals(filterName, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+    
+            return View(filteredProducts);
         }
 
         public IActionResult View(int id)
         {
-            if (myProducts.Find(x => x.Id == id) == null)
+            var productToView = myProducts.Find(x => x.Id == id);
+            if ( productToView == null)
                 return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
 
-            //Please, add your implementation of the method
-            return View(/*TODO: pass corresponding product here*/);
+            return View(productToView);
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
             var productToEdit = myProducts.Find(x => x.Id == id);
             if ( productToEdit == null)
-                return RedirectToAction("Error", new ProductError(id, "Wrong Id input: "));
+                return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
 
             return View(productToEdit);
         } 
