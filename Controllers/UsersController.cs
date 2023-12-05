@@ -12,22 +12,27 @@ namespace ProductsWithRouting.Controllers
 {
     public class UsersController : Controller
     {
-        private List<User> myUsers;
+		private List<User> myUsers;
+		private string password = "df2323eoT";
 
-        public UsersController(Data data)
+		public UsersController(Data data)
         {
             myUsers = data.Users;
         }
-
-        public IActionResult Index(string id)
-        {
-            return View(myUsers);
-        }
+		[Route("{controller}")]
+		[Route("{controller}/{action}")]
+		public IActionResult Index([FromBody] string id)
+		{
+			if (id == password)
+			{
+				return View(myUsers);
+			}
+			return Unauthorized();
+		}
 
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-    }
+	}
 }
