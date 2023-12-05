@@ -40,14 +40,15 @@ namespace ProductsWithRouting.Controllers
                 filteredProducts = myProducts
                     .Where(p => p.Name.Equals(filterName, StringComparison.OrdinalIgnoreCase))
                     .ToList();
-            }    
+            }
             return View(filteredProducts);
         }
 
+        [Route("{controller}/{id}")]
         public IActionResult View(int id)
         {
             var productToView = myProducts.Find(x => x.Id == id);
-            if ( productToView == null)
+            if (productToView == null)
                 return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
 
             return View(productToView);
@@ -56,26 +57,28 @@ namespace ProductsWithRouting.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-              var productToEdit = myProducts.Find(x => x.Id == id);
-              if ( productToEdit == null)
-              return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
-              return View(productToEdit);
-         } 
-         [HttpPost]
-         public IActionResult Edit(Product product)
-         {
-              int productIndex = myProducts.FindIndex(p => p.Id == product.Id);
-              if (productIndex == -1)
-              {
-                  return RedirectToAction("Error", new ProductError(product.Id, "Wrong product Id: "));
-              }
-              myProducts[productIndex] = product;
-    
-              return View("Index", myProducts);
-        } 
-		[Route("{controller}/{action}")]
+            var productToEdit = myProducts.Find(x => x.Id == id);
+            if (productToEdit == null)
+                return RedirectToAction("Error", new ProductError(id, "Wrong product Id input: "));
+            return View(productToEdit);
+        }
+
         [HttpPost]
-		public IActionResult Create(Product product)
+        public IActionResult Edit(Product product)
+        {
+            int productIndex = myProducts.FindIndex(p => p.Id == product.Id);
+            if (productIndex == -1)
+            {
+                return RedirectToAction("Error", new ProductError(product.Id, "Wrong product Id: "));
+            }
+            myProducts[productIndex] = product;
+
+            return View("Index", myProducts);
+        }
+
+        [Route("{controller}/{action}")]
+        [HttpPost]
+        public IActionResult Create(Product product)
         {
             // Server side validation if client side javascript is disabled
             if (ModelState.IsValid)
@@ -89,7 +92,7 @@ namespace ProductsWithRouting.Controllers
             {
                 if (item.Value.ValidationState == ModelValidationState.Invalid)
                 {
-                    errorMessages = $"{errorMessages}\nExceptiion in property {item.Key}:\n";
+                    errorMessages = $"{errorMessages}\nException in property {item.Key}:\n";
                     foreach (var error in item.Value.Errors)
                     {
                         errorMessages = $"{errorMessages}{error.ErrorMessage}\n";
@@ -99,12 +102,11 @@ namespace ProductsWithRouting.Controllers
             return RedirectToAction("Error", new ProductError(product.Id, errorMessages));
         }
 
-        [Route("{controller}/{new}")]
+        [Route("{controller}/new")]
         public IActionResult Create()
         {
             return View(new Product() { Id = myProducts.MaxBy(p => p.Id).Id + 1 });
         }
-
 
         [Route("products/delete/{id}")]
         public IActionResult Delete(int id)
